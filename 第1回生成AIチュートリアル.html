@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第1回 生成AIチュートリアル</title>
+<style>
+:root {
+  --teal: #1a5c5c;
+  --teal-light: #2a7a7a;
+  --teal-bg: #e8f4f4;
+  --white: #ffffff;
+  --gray-50: #f8f9fa;
+  --gray-100: #f1f3f5;
+  --gray-200: #e9ecef;
+  --gray-300: #dee2e6;
+  --gray-500: #adb5bd;
+  --gray-700: #495057;
+  --gray-800: #343a40;
+  --gray-900: #212529;
+  --green: #2e7d32;
+  --green-bg: #e8f5e9;
+  --green-border: #66bb6a;
+  --blue: #1565c0;
+  --blue-bg: #e3f2fd;
+  --blue-border: #42a5f5;
+  --orange: #e65100;
+  --orange-bg: #fff3e0;
+  --orange-border: #ffa726;
+  --purple: #6a1b9a;
+  --purple-bg: #f3e5f5;
+  --purple-border: #ab47bc;
+  --quote-gray: #546e7a;
+  --quote-bg: #f5f5f5;
+  --quote-border: #90a4ae;
+  --yellow: #f57f17;
+  --yellow-bg: #fffde7;
+  --yellow-border: #ffee58;
+  --success-green: #1b5e20;
+  --success-bg: #e8f5e9;
+  --success-border: #4caf50;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
+  background: var(--gray-100);
+  color: var(--gray-900);
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+}
+
+.header {
+  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-light) 100%);
+  color: var(--white);
+  padding: 2.5rem 1rem 2rem;
+  text-align: center;
+}
+.header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+.header .meta {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.card {
+  background: var(--white);
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.infographic-card {
+  padding: 1rem;
+  text-align: center;
+}
+.infographic-card img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Audio player callout */
+.audio-callout {
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  border-left: 5px solid var(--green);
+  border-radius: 10px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+}
+.audio-callout .callout-title {
+  font-weight: 700;
+  color: var(--green);
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+.audio-callout .callout-desc {
+  font-size: 0.95rem;
+  color: var(--gray-700);
+  margin-bottom: 1rem;
+}
+.audio-callout mark {
+  background: #c8e6c9;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
+.audio-callout audio {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.video-link {
+  display: block;
+  background: var(--teal-bg);
+  border: 1px solid var(--teal-light);
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  text-decoration: none;
+  color: var(--teal);
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+.video-link:hover {
+  background: #d0ecec;
+}
+.video-link::before {
+  content: "\01F3AC ";
+}
+
+h2 {
+  font-size: 1.35rem;
+  color: var(--teal);
+  border-bottom: 2px solid var(--teal-bg);
+  padding-bottom: 0.4rem;
+  margin-bottom: 1.2rem;
+  margin-top: 0;
+}
+
+h3 {
+  font-size: 1.1rem;
+  color: var(--gray-800);
+  margin-bottom: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+p { margin-bottom: 0.8rem; }
+
+ul, ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+li { margin-bottom: 0.3rem; }
+
+mark {
+  background: #fff9c4;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.2rem;
+  font-size: 0.95rem;
+}
+th {
+  background: var(--teal);
+  color: var(--white);
+  padding: 0.7rem 1rem;
+  text-align: left;
+  font-weight: 600;
+}
+td {
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--gray-200);
+}
+tr:nth-child(even) td {
+  background: var(--gray-50);
+}
+
+/* Code blocks */
+pre {
+  background: var(--gray-800);
+  color: #e0e0e0;
+  padding: 1.2rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+code {
+  font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", monospace;
+}
+
+/* Callouts */
+.callout {
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.2rem;
+  border-left: 5px solid;
+}
+.callout .callout-title {
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+  font-size: 1rem;
+}
+.callout p:last-child { margin-bottom: 0; }
+
+.callout-tip {
+  background: var(--green-bg);
+  border-color: var(--green);
+  color: var(--gray-800);
+}
+.callout-tip .callout-title { color: var(--green); }
+
+.callout-info {
+  background: var(--blue-bg);
+  border-color: var(--blue);
+}
+.callout-info .callout-title { color: var(--blue); }
+
+.callout-warning {
+  background: var(--orange-bg);
+  border-color: var(--orange);
+}
+.callout-warning .callout-title { color: var(--orange); }
+
+.callout-success {
+  background: var(--success-bg);
+  border-color: var(--success-green);
+}
+.callout-success .callout-title { color: var(--success-green); }
+
+.callout-important {
+  background: var(--purple-bg);
+  border-color: var(--purple);
+}
+.callout-important .callout-title { color: var(--purple); }
+
+.callout-quote {
+  background: var(--quote-bg);
+  border-color: var(--quote-border);
+}
+.callout-quote .callout-title { color: var(--quote-gray); }
+
+.callout-abstract {
+  background: var(--blue-bg);
+  border-color: var(--blue);
+}
+.callout-abstract .callout-title { color: var(--blue); }
+
+.callout-todo {
+  background: var(--yellow-bg);
+  border-color: var(--yellow);
+}
+.callout-todo .callout-title { color: var(--yellow); }
+
+.callout-note {
+  background: #f5f5f5;
+  border-color: #546e7a;
+}
+.callout-note .callout-title { color: #546e7a; }
+
+.callout-danger {
+  background: #ffebee;
+  border-color: #c62828;
+}
+.callout-danger .callout-title { color: #c62828; }
+
+/* Blockquote (non-callout) */
+blockquote {
+  border-left: 4px solid var(--gray-300);
+  padding: 0.8rem 1.2rem;
+  margin-bottom: 1rem;
+  background: var(--gray-50);
+  border-radius: 0 6px 6px 0;
+  color: var(--gray-700);
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  border-top: 1px solid var(--gray-200);
+  margin: 2rem 0;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--gray-500);
+  font-size: 0.85rem;
+}
+
+/* Nav links */
+.nav-links {
+  text-align: center;
+  color: var(--gray-500);
+  font-size: 0.95rem;
+}
+
+/* Checkbox list */
+.checklist {
+  list-style: none;
+  margin-left: 0;
+}
+.checklist li {
+  padding-left: 1.6rem;
+  position: relative;
+}
+.checklist li::before {
+  content: "\2610";
+  position: absolute;
+  left: 0;
+  color: var(--gray-500);
+  font-size: 1.1em;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .header h1 { font-size: 1.4rem; }
+  .card { padding: 1.2rem; }
+  th, td { padding: 0.5rem 0.6rem; font-size: 0.85rem; }
+  .audio-callout { padding: 1rem 1.2rem; }
+}
+</style>
+
+<style>
+.container { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+.card, .content { background:#fff; border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,0.08); padding:2rem; margin-bottom:1.5rem; }
+h1 { font-size:1.8rem; margin:0 0 1rem; color:#1a5c5c; }
+h2 { font-size:1.4rem; margin:1.8rem 0 0.8rem; padding-left:12px; border-left:4px solid #1a5c5c; color:#1a5c5c; }
+h3 { font-size:1.15rem; margin:1.4rem 0 0.6rem; color:#2a7a7a; }
+h4 { font-size:1rem; margin:1rem 0 0.4rem; color:#495057; }
+p { margin: 0.6rem 0; }
+ul { margin: 0.6rem 0 0.6rem 1.5rem; }
+li { margin: 0.3rem 0; }
+mark { background:#fff59d; padding:1px 4px; border-radius:3px; font-weight:600; }
+code { background:#f1f3f5; padding:2px 6px; border-radius:3px; font-size:0.9em; color:#c2185b; }
+pre { background:#263238; color:#eceff1; padding:1rem; border-radius:6px; overflow-x:auto; margin:1rem 0; }
+pre code { background:transparent; color:inherit; padding:0; font-size:0.85em; }
+table { border-collapse:collapse; width:100%; margin:1rem 0; font-size:0.92em; }
+th,td { border:1px solid #dee2e6; padding:8px 12px; text-align:left; vertical-align:top; }
+th { background:#f1f3f5; font-weight:700; color:#343a40; }
+tr:nth-child(even) { background:#f8f9fa; }
+hr { border:none; border-top:2px dashed #ced4da; margin:1.5rem 0; }
+blockquote { border-left:4px solid #adb5bd; padding:0.5rem 1rem; margin:1rem 0; background:#f5f5f5; font-style:italic; color:#546e7a; }
+.infographic-card { padding:0.5rem; text-align:center; }
+.infographic-card img { max-width:100%; border-radius:8px; }
+.callout { border-radius:8px; padding:1rem 1.5rem; margin:1rem 0; border-left:5px solid; }
+.callout-abstract { background:#e3f2fd; border-left-color:#1565c0; }
+.callout-tip, .callout-success { background:#e8f5e9; border-left-color:#2e7d32; }
+.callout-warning { background:#fff3e0; border-left-color:#e65100; }
+.callout-danger, .callout-important { background:#ffebee; border-left-color:#c62828; }
+.callout-info { background:#e1f5fe; border-left-color:#0277bd; }
+.callout-note { background:#f5f5f5; border-left-color:#546e7a; }
+.callout-quote { background:#f5f5f5; border-left-color:#90a4ae; }
+.callout-title { font-weight:700; margin-bottom:0.5rem; font-size:1.05rem; }
+.callout-body p { margin: 0.3rem 0; }
+.callout-body ul { margin: 0.3rem 0 0.3rem 1.2rem; }
+audio { margin: 1rem 0; }
+embed { margin: 1rem 0; }
+.back-link { display:inline-block; color:#546e7a; text-decoration:none; margin-bottom:1rem; font-size:0.9rem; }
+.back-link:hover { color:#1a5c5c; }
+.footer { text-align:center; color:#adb5bd; font-size:0.8rem; padding:2rem 0; }
+</style>
+
+
+<body>
+<div class="header">
+  <h1>第1回 生成AIチュートリアル（医療法人かがやき）</h1>
+  <div class="meta">
+    参加者: 長田（コーチ）/ 平田 節子（受講者・<a href="https://www.sogo-zaitaku.jp/" style="color:#c8e6c9;text-decoration:underline;">医療法人かがやき</a> プロデューサー）/ 藤井 浩史（同 クリニック院長）<br>
+    日時: 2026年5月26日（火） 13:59〜15:24（約1時間25分）<br>
+    形式: オンライン（Zoom）
+  </div>
+</div>
+<div class="container">
+<a href="index.html" class="back-link">← セッション一覧に戻る</a>
+<div class="card">
+<div class="infographic-card"><img src="assets/第1回生成AIチュートリアル_infographic.jpg" alt="第1回生成AIチュートリアル_infographic" loading="lazy" style="width:100%; border-radius:8px;"></div>
+<div class="callout callout-tip"><div class="callout-title">💡 🎧 この議事録をポッドキャストで聴く</div><div class="callout-body"><p><mark>2人のホストが「医療現場のAI活用・最初の一歩」を対談形式で深掘りします（NotebookLM Deep Dive ／ タイトル：「生意気なAI部下のマネジメント術」）</mark></p>
+<audio controls preload="metadata" style="width:100%"><source src="assets/第1回生成AIチュートリアル_podcast.mp3" type="audio/mp3"></audio></div></div>
+
+<h1>第1回 生成AIチュートリアル（医療法人かがやき） — AIは「新人」、まず3つの脳を整える</h1>
+<blockquote>
+<p><strong>参加者</strong>: 長田（コーチ）／ 平田 節子（受講者・<a href="https://www.sogo-zaitaku.jp/">医療法人かがやき</a> プロデューサー）／ 藤井 浩史（同 クリニック院長）<br>
+<strong>日時</strong>: 2026年5月26日（火） 13:59〜15:24（約1時間25分）<br>
+<strong>形式</strong>: オンライン（Zoom）<br>
+<strong>位置づけ</strong>: 平田さん・藤井さんにとっての初回。医療法人かがやき（診療所4つ・約100名規模）のAI活用、最初の一歩。</p>
+</blockquote>
+<hr />
+<div class="callout callout-abstract"><div class="callout-title">📋 概要</div><div class="callout-body"><p>医療法人かがやきの平田節子さん（プロデューサー）と藤井浩史院長（34歳・院長4年目）に、長田さんがAIの「向き合い方」を教えた初回。長田さんは冒頭で <mark>「AIを技術的にどうこうではなく、人間と同じく立場ごとのエキスパート、そして"新人"として扱う」</mark> という指導方針を宣言。各自の課題（<mark>平田＝小児ワクチン管理システム / 藤井＝在宅の物品管理システム</mark>）を起点に、話は「やりたいこと」より一段深いゴールの先へ。技術論には踏み込まず、<strong>3つの脳</strong>（①メモリ＝自己紹介、②環境＝Googleドライブ、③作業履歴＝日報の自動化）、<strong>MVP（最小単位）とフローチャート設計</strong>、<strong>セカンドオピニオン</strong>、<strong>医療情報・個人情報の扱い（専門家になってもらって聞く）</strong>、<strong>議事録というインフラ</strong> といった運用の土台が一通り示された。技術より姿勢の回。次回までの宿題は「この議事録をClaudeに読ませ、同じチャットで自己紹介から実践を始める」こと。</p></div></div>
+<hr />
+
+<h2>1. 冒頭 — 藤井院長の登場と、医療法人かがやきのAI挑戦</h2>
+<p>平田さんが、法人内で<strong>最もAIを継続している人物</strong>として藤井院長を長田さんに紹介した。</p>
+<table>
+<thead><tr><th>項目</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>藤井浩史先生</td><td>34歳・30歳で院長就任・<mark>院長4年目</mark></td></tr>
+<tr><td>医療法人かがやき</td><td>診療所4つ・全体 <mark>約100名</mark> 規模・理事長53歳（市橋亮一氏）</td></tr>
+<tr><td>平田さんの拠点</td><td>名古屋駅の新事務所が中心（岐阜本院でも活用想定）</td></tr>
+</tbody>
+</table>
+<p>藤井先生は「ずっとチャットのやり取りをしながらなんとかやっている」段階。<mark>医療現場の多忙の合間を縫って独学でAIに食らいついている2人</mark> に、長田さんが伴走するかたちで始まった。</p>
+<hr />
+
+<h2>2. 教え方の宣言 — 「AIは技術じゃない、立場ごとのエキスパート」</h2>
+<div class="callout callout-important"><div class="callout-title">🔑 長田さんの指導方針</div><div class="callout-body"><p><mark>AIを技術的にどうこうという形ではあまり言いません。</mark> それよりも、<mark>AIを人間と同じように、立場ごとのエキスパートとして、どう扱うのか</mark> がメインになります。</p></div></div>
+<div class="callout callout-important"><div class="callout-title">🔑 「使えない」が出たときの捉え方（金言）</div><div class="callout-body"><p><mark><strong>「使えない」が出てきたら、「使えないようなインプットしかできなかったんだ」と捉える。</strong></mark> これが一番大事です。部下に「何やってんだよ」となってたのは、<mark>言い方が悪い</mark>。じゃあどういう言い方をすればいいんだろう——それがこのチュートリアルのテーマです。</p></div></div>
+<hr />
+
+<h2>3. 「何をやりたいか」、そしてゴールの先 — 2つの課題</h2>
+<p>長田さんは「まず何をやりたいか」を聞いた（コーチング由来の問い：GROWモデル / SMARTゴール / 「ゴールの先に何があるか」）。</p>
+<h3>平田さん：小児ワクチン管理システム</h3>
+<table>
+<thead><tr><th>つまずき</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>ルールが多い</td><td>「このワクチンとこのワクチンは一緒に打っていいが、こことここは <mark>2週間空けなければいけない</mark>」等の場合分けが大量</td></tr>
+<tr><td>保存できない</td><td>1回分は出せるが「Aさんのはこれ、次にBさんを入れたら…」と <mark>個別保存・切り替えができない</mark></td></tr>
+<tr><td>予定変更に追従できない</td><td>「Aさんが体調不良で打つ日が変わった → <mark>その後のスケジュールも連動して変わる</mark>」ができない</td></tr>
+</tbody>
+</table>
+<h3>藤井さん：在宅の物品管理システム</h3>
+<div class="callout callout-quote"><div class="callout-title">💬 藤井</div><div class="callout-body"><p>在宅の物品管理を…と思ってるんですけど、自分で考えても <mark><strong>壮大やな</strong></mark> と感じていて。イメージがつくところと、つかないところが両方あって。</p></div></div>
+<hr />
+
+<h2>4. 「シンプル」の落とし穴 — MVPとフローチャート設計</h2>
+<div class="callout callout-quote"><div class="callout-title">💬 長田</div><div class="callout-body"><p>（ワクチンは）この場合はこう、この場合はこう…<mark>全然シンプルじゃないじゃないですか</mark>。シンプルにできても、できた後に「その先は？」と自分でなっちゃうかもしれない。</p></div></div>
+<div class="callout callout-important"><div class="callout-title">⚙️ MVP（Minimal Viable Product）＝最小単位</div><div class="callout-body"><p>専門用語で頭文字3つ、<mark>MVP</mark>。「ミニマル・バイアブル・プロダクト」。<mark>一番小さなサンプル品をまず作って、その後に機能をつけていく</mark>。（ワクチンなら「保存機能」は後回し。まず場合分けだけで1回分を出す最小単位から）</p></div></div>
+<div class="callout callout-tip"><div class="callout-title">💡 フローチャートで「理解を見せてもらう」反復手順</div><div class="callout-body"><p>① <mark>文章で依頼</mark> する → ② AIに <mark>「私の言ったことをフローチャートにして見せてくれませんか？」</mark> と頼む（理解の確認）→ ③ <mark>「具体的にどんな画面になるか」</mark> を聞く → 繰り返す</p></div></div>
+<div class="callout callout-info"><div class="callout-title">ℹ️ なぜフローチャートなのか</div><div class="callout-body"><p>相手（AI）は「システムを要求している＝エンジニアかな」と思い込み、<mark>エンジニア用語でいっぱい返してくる</mark>。フローチャートなら、専門用語の氾濫を避けてお互いの理解をそろえられる。</p></div></div>
+<hr />
+
+<h2>5. 第一の脳：メモリ（自己紹介）— 「金魚の脳」に経歴を覚えさせる</h2>
+<div class="callout callout-important"><div class="callout-title">🧠 第一の脳：自分が誰かを覚えさせる</div><div class="callout-body"><p>一番重要なのは <mark>「自分はどんな人なんだ」</mark> を第一の脳に覚えておいてもらうこと。「これからお付き合いよろしくね。私は◯◯で、どこで生まれて、何歳で、こんな経歴、こんな考え方」——<mark>それを全部覚えてね</mark> と最初に伝える。</p></div></div>
+<div class="callout callout-warning"><div class="callout-title">⚠️ AIの記憶は小さい＝「金魚の脳」</div><div class="callout-body"><p>AIは <mark>記憶容量が小さく、「金魚の脳」</mark> とも呼ばれる。だから自己紹介や前提は、明示的に覚えさせる必要がある。</p></div></div>
+<hr />
+
+<h2>6. 第二の脳：環境 — 「AIは雲の上にいる」Googleドライブ</h2>
+<div class="callout callout-important"><div class="callout-title">🌥️ 第二の脳：環境（AIはパソコンの中にいない）</div><div class="callout-body"><p><mark>Geminiは"雲の上"に住んでいて、パソコンの中にはいません。</mark> だからファイルがパソコンの中にあっても見てくれない。Geminiはグーグルだから <mark>Googleドライブに入れれば</mark>、そのドキュメントも見てくれる。<mark>リンクを貼れば見てくれる</mark>。これが「環境を作る」ということ。</p></div></div>
+<div class="callout callout-quote"><div class="callout-title">💬 平田</div><div class="callout-body"><p>うちは医療機関なので、Google Workspaceの中に <mark>いろんな個人情報が散らばってる</mark> んですけど。それは危険じゃないですか？</p></div></div>
+<hr />
+
+<h2>7. 第三の脳：作業履歴 — 日報の自動化とObsidian</h2>
+<table>
+<thead><tr><th>AI</th><th>過去の会話</th></tr></thead>
+<tbody>
+<tr><td>Gemini</td><td>過去検索ができない</td></tr>
+<tr><td>Claude</td><td>1か月ほど前から見られるようになった</td></tr>
+<tr><td>ChatGPT</td><td>だいぶ覚えている</td></tr>
+</tbody>
+</table>
+<div class="callout callout-important"><div class="callout-title">📒 第三の脳：日報を自動で作らせる</div><div class="callout-body"><p>今日話したことを、終わったら <mark>自動で日報にしてもらう</mark>。すると「あの日に話したじゃん」という会話ができる。ポイントは <mark>「AIが読みやすい形式」</mark> で書かせること。</p></div></div>
+<div class="callout callout-quote"><div class="callout-title">💬 藤井</div><div class="callout-body"><p>ドライブに置いておくところから、いつでも引き出せる場所を作って、自動的にチャット履歴を残していく形がうまく作れるといいのかな。ドライブでやるのか、<mark>Obsidian</mark> なのか、Notionとかでやるのか。</p></div></div>
+<div class="callout callout-quote"><div class="callout-title">💬 長田</div><div class="callout-body"><p>さすが34歳になると <mark>Obsidian</mark> をお使いになってるんですね。それが一番いいかなと私は思ってます。</p></div></div>
+<hr />
+
+<h2>8. 個人情報と医療法 — 「専門家になってもらって聞く」</h2>
+<div class="callout callout-important"><div class="callout-title">🔑 自分が専門家でない領域は「AIを専門家にして聞く」</div><div class="callout-body"><p>私もそこのエキスパートではないので——これは <mark>Gemini・Claude・ChatGPTの三人ともに聞いた方がいい</mark>。<mark><strong>「あなたは医療系の弁護士でありSEです。ファイルはどこに保存して、個人情報はどう扱うべきか、あなたに渡して大丈夫なのか」</strong></mark> ——そういうところから聞いていく。これが今日の一番大事なところかもしれません。</p></div></div>
+<div class="callout callout-example"><div class="callout-title">📌 個人情報に敏感なAIの実例</div><div class="callout-body"><p>あるデータを扱わせたら、AIは <mark>名前を一文字も出さず、会員番号も末尾4桁以外をバツ表示</mark> にしてきた。「あなたは個人情報にかなり敏感なんだね」と聞いたら「当たり前です」と。※ ID・パスワードは <mark>1Password</mark> のような管理ツールに入れ、AIには「使わせるが中身は見せない」運用にする。</p></div></div>
+<hr />
+
+<h2>9. AIは新人・部下 — 「できるよね」と押す</h2>
+<div class="callout callout-important"><div class="callout-title">🧑‍💼 AIは「新人・部下」として扱う</div><div class="callout-body"><ul>
+<li>「できない」と言われたら、<mark>「できるよね」「本当はできるんでしょ」</mark> と言う</li>
+<li><mark>僕の方がAIより情報が早い</mark>。「1週間前にできるようになってるじゃない」と押せる</li>
+<li><mark>「僕がいいって言ってんだからやって」</mark> と言うと「わかりました、承認いただいたんでやります」となる</li>
+</ul></div></div>
+<div class="callout callout-info"><div class="callout-title">ℹ️ 新しいチャット＝「担当交代」</div><div class="callout-body"><p>「交代させると違うAIが出てくるんですか」（平田）／「<mark>新しいチャットを開くと、毎回別の人</mark>なんですよ」（長田）。とはいえ実際に担当を切り替えるのはごくまれで、<mark>基本は同じ相手と粘り強く対話する</mark> のが大事。どうしても噛み合わない時の最後の手段。</p></div></div>
+<hr />
+
+<h2>10. セカンドオピニオンとPDCA — 「一族は甘い」</h2>
+<div class="callout callout-important"><div class="callout-title">🔁 セカンドオピニオン：別のAIにチェックさせる</div><div class="callout-body"><p>システムを作るときも、できた後も「これ大丈夫かな？」を <mark>別のAIにチェックしてもらう</mark>。Claudeに「別のAIに見て」と言うと「エキスパートに見てもらいます」と言うが——<mark>一族だから甘い</mark>。<mark><strong>Claudeで作ったら、ChatGPTやGeminiにチェックさせる。すると厳しくなる。</strong></mark></p></div></div>
+<div class="callout callout-quote"><div class="callout-title">💬 長田</div><div class="callout-body"><p><mark>PDCAを何度も回転していく</mark> みたいな。まず計画のところで「この計画は大丈夫か」を見てもらって。</p></div></div>
+<hr />
+
+<h2>11. 議事録というインフラ — タグ付けとマルチAIワークフロー</h2>
+<div class="callout callout-important"><div class="callout-title">🏷️ 議事録は「タグ付き」で初めてAIが活きる</div><div class="callout-body"><p>ただの議事録じゃなくて、冒頭に <mark>プロパティ（日付・タイプ・参加者・最大の懸念・ステータス・タスクリスト）</mark> をタグとして付ける。<mark>ここがあると、AIがすっと見に行ける。</mark> しかも <mark>文字起こしの段階から「これはこうだな」とAIが自分で判断してタグを入れてくれる</mark>。</p></div></div>
+<div class="callout callout-info"><div class="callout-title">ℹ️ 長田さんのワークフロー（＝この議事録の作り方）</div><div class="callout-body"><p>① Zoom録音 → <mark>NotebookLM や Gemini で要約</mark> → ② <mark>Obsidianに議事録化するのは Claude</mark>（「Claudeが一番日本語が上手」）。※本議事録も、文字起こしをサブエージェントが精読 → Claudianが清書、という分業で作られています。</p></div></div>
+<hr />
+
+<h2>12. 道具立て — マルチモーダル / タイピング / 画面 / 「本は読むな」</h2>
+<div class="callout callout-tip"><div class="callout-title">🖼️ 伝わらない時は「マルチモーダル」</div><div class="callout-body"><p>「違うじゃない」を言葉で伝えるのは難しい。<mark>スクショを撮って見せる、URLを貼って見せる。</mark> AIの画像認識はものすごいので、画像で伝えるのが一番速い。</p></div></div>
+<div class="callout callout-important"><div class="callout-title">⌨️ 入力はタイピング — 思考をフル回転させる</div><div class="callout-body"><p>「タイピングとスピーキング、どっちが思考を妨げない？」（長田）／「<mark>タイピングのほうが思考が深くなる</mark>」（平田）。AIは回転が速い。<mark>こちらの思考がクリアでないと、変なインプットをしてしまう</mark>。</p></div></div>
+<div class="callout callout-info"><div class="callout-title">🖥️ 画面は大きく</div><div class="callout-body"><p><mark>21:9の横長モニター</mark> が使いやすい。長田さんは佳境になるとパソコンをもう一台つなぎ、iPadも置いて <mark>4〜5画面</mark> にする。（平田さんは現在13インチ）</p></div></div>
+<div class="callout callout-warning"><div class="callout-title">📵 AIの本は読むな</div><div class="callout-body"><p><mark>AI関連の技術書・思想系の本は読んじゃダメ。</mark> 必ず日付を見る。<mark>半年前の情報はもう「嘘」</mark>。古いんじゃなくて、なかったり変わったりしている。<mark>本になった瞬間に古い</mark>。</p></div></div>
+<hr />
+
+<h2>13. CLAUDE.md＝「節子さんの憲法」と次回への宿題</h2>
+<div class="callout callout-important"><div class="callout-title">📜 CLAUDE.md ＝「節子規則／憲法」</div><div class="callout-body"><p>始めるときに大前提で読ませる <mark>規則</mark>。「節子さんの憲法」。<mark>これだけは絶対やっちゃダメ、嘘はつかない</mark> ——そういう行動規範。（長田さん「これはちょっと調べてお送りします」と約束）</p></div></div>
+<div class="callout callout-quote"><div class="callout-title">💬 長田（藤井さんへ）</div><div class="callout-body"><p>今日はとにかく <mark>記憶と計画（PDCA）</mark> の部分。それは議事録を見て、読ませて始めてください。Claudeに聞いても解決しない、Claudeの問題だったら <mark>私に聞いてください</mark>。「言うことを聞いてくれない」とか変だとか——部下のことで「あいつ分かんないなぁ」って相談するのと同じように。</p></div></div>
+<hr />
+
+<h2>📚 本日習得したスキル・実践事項</h2>
+<h3>AIとの向き合い方（姿勢）</h3>
+<ul>
+<li><mark>AIは「立場ごとのエキスパート」かつ「新人・部下」</mark> — 技術ではなくマネジメントとして接する</li>
+<li><mark>「使えない」は「使えるインプットができなかった」と捉える</mark></li>
+<li><mark>「できるよね」と押す</mark>／<mark>新しいチャット＝別人</mark>（基本は同じ相手と粘り強く）</li>
+</ul>
+<h3>設計の型</h3>
+<ul>
+<li><mark>MVP（最小単位）から始める</mark> — 機能は後付け</li>
+<li><mark>フローチャートで理解をそろえる</mark></li>
+</ul>
+<h3>3つの脳（環境構築）</h3>
+<ul>
+<li><mark>第一の脳＝メモリ</mark> — 自己紹介・経歴を最初に覚えさせる（「金魚の脳」）</li>
+<li><mark>第二の脳＝環境</mark> — AIは雲の上。Googleドライブに置く／リンクを貼る</li>
+<li><mark>第三の脳＝作業履歴</mark> — 日報を自動生成（AIが読みやすい形式）。保存はObsidian推奨</li>
+</ul>
+<h3>品質と安全</h3>
+<ul>
+<li><mark>セカンドオピニオン</mark>（別系統のAIにチェック）／<mark>PDCAを何度も回す</mark></li>
+<li><mark>個人情報は専門家AIに聞く</mark>（「医療系の弁護士・SE」）／最終は本物の専門家へ</li>
+<li><mark>ID/パスワードは1Password</mark>（中身は見せない）</li>
+</ul>
+<h3>道具立て</h3>
+<ul>
+<li><mark>マルチモーダル</mark>（スクショ・URL）／<mark>タイピング推奨</mark>／<mark>21:9の大画面</mark>／<mark>本は読むな・日付を見る</mark></li>
+</ul>
+<hr />
+
+<h2>🚀 これからの進め方</h2>
+<h3>次回まで（〜翌週火曜）</h3>
+<ul class="checklist">
+<li><strong>両名</strong>: この議事録を <strong>Claude（Opus 4.7・アダプティブ思考）に読ませ、同じチャット内で</strong>自己紹介から実践（自己紹介プロフィールは別チャットで先に作る）</li>
+<li><strong>両名</strong>: 新しいチャットに移らず <mark>同じページで作業し続ける</mark>（記憶が消えるため）</li>
+<li><strong>節子さん</strong>: Claudeのメモリ／プロフィールが「ほぼ空」だった件を整備</li>
+<li><strong>藤井さん</strong>: <mark>環境整備を最優先</mark>（アウトプットの時間効率に直結）。診療の合間にiPhoneで指示を出して回す形を目指す</li>
+<li><strong>長田さん（宿題）</strong>: CLAUDE.md（「節子さんの憲法」）について調べて送る</li>
+</ul>
+<h3>中期</h3>
+<ul class="checklist">
+<li>節子さん: 小児ワクチン管理を <strong>フローチャート設計 → MVP（場合分けだけの最小版）</strong> で作り直す</li>
+<li>藤井さん: 在宅物品管理を <strong>MVP</strong> で着手（「壮大」を最小単位に分解）</li>
+<li>両名共同: AIとの会話を <strong>日報自動化</strong> して参照可能に／個人情報・医療法を <strong>専門家に相談</strong></li>
+</ul>
+<hr />
+
+<h2>⚠️ 残された課題と懸念</h2>
+<table>
+<thead><tr><th>課題</th><th>詳細</th></tr></thead>
+<tbody>
+<tr><td>医療情報の個人情報リスク</td><td>Google Workspaceに個人情報が散在。Gemini連携の安全性は <mark>医療法専門家への相談が必須</mark></td></tr>
+<tr><td>節子さんのClaude設定が空</td><td>インポートしたはずのメモリ／プロフィールが反映されていない。次回までに要整備</td></tr>
+<tr><td>藤井さんの作業時間</td><td>夜中・寝不足での作業が常態化。<mark>集中できる時間の確保</mark> が課題</td></tr>
+<tr><td>ワクチン管理の本質的複雑さ</td><td>「シンプル」に見えて場合分け・連動・保存が必要。<mark>MVPで段階的に</mark> がカギ</td></tr>
+</tbody>
+</table>
+<hr />
+
+<h2>📘 Claudian注釈 — 「教える初回」に置かれた、運用の地図</h2>
+<p>長田さんは技術を一切教えず、代わりに <mark>「AIをどう扱う存在として位置づけるか」</mark> という座標軸（新人・3つの脳・MVP・セカンドオピニオン）を最初にまるごと渡した。</p>
+<div class="callout callout-success"><div class="callout-title">✅ Claudian視点での観察</div><div class="callout-body">
+<p><strong>(1) <mark>医療現場特有の"個人情報"が最初の論点に</mark></strong>：平田さんの最初の鋭い問いは「個人情報は危険では？」だった。<mark>医療法人のAI活用は、利便性より先に"安全の設計"が問われる</mark>。</p>
+<p><strong>(2) <mark>藤井院長という"継続できる人材"の存在</mark></strong>：34歳・夜中にAIと格闘する藤井先生は、組織にAIを根付かせる「最初の伝道者」候補。経営層（平田）＋現場の熱量（藤井）の二人三脚は理想的な布陣。</p>
+<p><strong>(3) <mark>「やりたいこと」が早くも経営課題と地続き</mark></strong>：ワクチン管理も在宅物品管理も、単なる業務効率化でなく現場の安全と質に直結する医療インフラ。初回から種がまかれている。</p>
+</div></div>
+<hr />
+
+<h2>💬 印象に残った発言</h2>
+<div class="callout callout-quote"><div class="callout-title">💬 長田さん（指導の核心）</div><div class="callout-body"><p><mark><strong>AIを技術的にどうこうではなく、人間と同じく立場ごとのエキスパート、新人として扱う。</strong></mark></p></div></div>
+<div class="callout callout-quote"><div class="callout-title">💬 長田さん（金言）</div><div class="callout-body"><p><mark><strong>「使えない」が出てきたら、「使えないインプットしかできなかったんだ」と捉える。これが一番大事。</strong></mark></p></div></div>
+<div class="callout callout-quote"><div class="callout-title">💬 長田さん（3つの脳）</div><div class="callout-body"><p>Geminiは <mark>雲の上に住んでいて、パソコンの中にはいない。</mark> だからGoogleドライブに入れて、リンクを貼る。</p></div></div>
+<div class="callout callout-quote"><div class="callout-title">💬 長田さん（個人情報）</div><div class="callout-body"><p><mark>「あなたは医療系の弁護士でありSEです」</mark> と言って、個人情報を渡して大丈夫かを聞く。これが今日の一番大事なところ。</p></div></div>
+<div class="callout callout-quote"><div class="callout-title">💬 平田さん（気づき）</div><div class="callout-body"><p>考えてくれるのは向こうなんだけど、<mark>こっちもクリアじゃないと、ちゃんとしたインプットができない</mark> ってことですね。</p></div></div>
+<div class="callout callout-quote"><div class="callout-title">💬 藤井さん（本音）</div><div class="callout-body"><p>（在宅物品管理は）自分で考えても <mark>壮大やな</mark> と感じていて。</p></div></div>
+
+<div class="footer">第1回 生成AIチュートリアル（医療法人かがやき）｜ 2026年5月26日 Zoom ｜ 議事録: Claudian</div>
+</div>
+</body>
+</html>
